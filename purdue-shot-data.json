@@ -1,0 +1,48 @@
+{
+“2024-25”: {
+“all”: [
+{
+“x”: 250,
+“y”: 80,
+“made”: true,
+“type”: “2pt”,
+“player”: “Team”,
+“game”: “Sample Game - Replace with real data”
+},
+{
+“x”: 350,
+“y”: 280,
+“made”: true,
+“type”: “3pt”,
+“player”: “Team”,
+“game”: “Sample Game - Replace with real data”
+},
+{
+“x”: 150,
+“y”: 290,
+“made”: false,
+“type”: “3pt”,
+“player”: “Team”,
+“game”: “Sample Game - Replace with real data”
+}
+],
+“braden-smith”: [],
+“trey-kaufman”: [],
+“fletcher-loyer”: [],
+“zach-edey”: []
+},
+“2023-24”: {
+“all”: [],
+“braden-smith”: [],
+“trey-kaufman”: [],
+“fletcher-loyer”: [],
+“zach-edey”: []
+},
+“2022-23”: {
+“all”: [],
+“braden-smith”: [],
+“trey-kaufman”: [],
+“fletcher-loyer”: [],
+“zach-edey”: []
+}
+}

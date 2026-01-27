@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purdue Basketball Shot Charts</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+```
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    :root {
+        --purdue-gold: #CFB991;
+        --purdue-black: #000000;
+        --court-wood: #C89B5C;
+        --court-line: #FFFFFF;
+        --made-shot: #4CAF50;
+        --missed-shot: #f44336;
+    }
+    
+    body {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        color: var(--purdue-gold);
+        font-family: 'IBM Plex Mono', monospace;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+    
+    .noise-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.03;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' /%3E%3C/svg%3E");
+    }
+    
+    header {
+        padding: 2rem 3rem;
+        border-bottom: 2px solid var(--purdue-gold);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent 0%, var(--purdue-gold) 50%, transparent 100%);
+        opacity: 0.05;
+        animation: shimmer 3s infinite;
+    }
+    
+    @keyframes shimmer {
+        0%, 100% { transform: translateX(-100%); }
+        50% { transform: translateX(100%); }
+    }
+    
+    h1 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 4rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 0 20px rgba(207, 185, 145, 0.3);
+        animation: fadeInDown 0.8s ease-out;
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .subtitle {
+        font-size: 0.9rem;
+        opacity: 0.7;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        animation: fadeIn 1s ease-out 0.3s backwards;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 0.7; }
+    }
+    
+    .controls {
+        padding: 2rem 3rem;
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+        align-items: center;
+        animation: fadeIn 1s ease-out 0.5s backwards;
+    }
+    
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        opacity: 0.8;
+    }
+    
+    select {
+        background: rgba(207, 185, 145, 0.1);
+        border: 1px solid var(--purdue-gold);
+        color: var(--purdue-gold);
+        padding: 0.75rem 1.25rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    select:hover {
+        background: rgba(207, 185, 145, 0.2);
+        box-shadow: 0 0 15px rgba(207, 185, 145, 0.2);
+    }
+    
+    select:focus {
+        outline: none;
+        box-shadow: 0 0 20px rgba(207, 185, 145, 0.4);
+    }
+    
+    .stats-bar {
+        padding: 1.5rem 3rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        border-top: 1px solid rgba(207, 185, 145, 0.2);
+        border-bottom: 1px solid rgba(207, 185, 145, 0.2);
+        background: rgba(0, 0, 0, 0.3);
+    }
+    
+    .stat-item {
+        text-align: center;
+        animation: fadeInUp 0.6s ease-out backwards;
+    }
+    
+    .stat-item:nth-child(1) { animation-delay: 0.6s; }
+    .stat-item:nth-child(2) { animation-delay: 0.7s; }
+    .stat-item:nth-child(3) { animation-delay: 0.8s; }
+    .stat-item:nth-child(4) { animation-delay: 0.9s; }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .stat-value {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2.5rem;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        opacity: 0.6;
+    }
+    
+    .chart-container {
+        padding: 3rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 1s ease-out 1s backwards;
+    }
+    
+    .court {
+        position: relative;
+        width: 500px;
+        height: 470px;
+        background: var(--court-wood);
+        border: 3px solid var(--court-line);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+    
+    .court-line {
+        position: absolute;
+        background: var(--court-line);
+    }
+    
+    .key {
+        width: 160px;
+        height: 190px;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 2px solid var(--court-line);
+        border-top: none;
+    }
+    
+    .three-point-arc {
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        border: 2px solid var(--court-line);
+        border-radius: 50%;
+        top: -163px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: transparent;
+    }
+    
+    .free-throw-circle {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        border: 2px solid var(--court-line);
+        border-radius: 50%;
+        top: 130px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .basket {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        border: 2px solid var(--court-line);
+        border-radius: 50%;
+        top: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .shot {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        opacity: 0;
+        animation: shotAppear 0.4s ease-out forwards;
+    }
+    
+    @keyframes shotAppear {
+        from {
+            opacity: 0;
+            transform: scale(0);
+        }
+        to {
+            opacity: 0.7;
+            transform: scale(1);
+        }
+    }
+    
+    .shot.made {
+        background: var(--made-shot);
+        border: 2px solid rgba(76, 175, 80, 0.8);
+        box-shadow: 0 0 10px rgba(76, 175, 80, 0.4);
+    }
+    
+    .shot.missed {
+        background: var(--missed-shot);
+        border: 2px solid rgba(244, 67, 54, 0.8);
+        box-shadow: 0 0 10px rgba(244, 67, 54, 0.4);
+    }
+    
+    .shot:hover {
+        transform: scale(1.5);
+        opacity: 1;
+        z-index: 10;
+    }
+    
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        padding: 2rem 3rem;
+        animation: fadeIn 1s ease-out 1.2s backwards;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .legend-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+    }
+    
+    .legend-dot.made {
+        background: var(--made-shot);
+        box-shadow: 0 0 10px rgba(76, 175, 80, 0.4);
+    }
+    
+    .legend-dot.missed {
+        background: var(--missed-shot);
+        box-shadow: 0 0 10px rgba(244, 67, 54, 0.4);
+    }
+    
+    .tooltip {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.95);
+        border: 1px solid var(--purdue-gold);
+        padding: 0.75rem 1rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        pointer-events: none;
+        z-index: 1000;
+        display: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+    
+    .tooltip-row {
+        margin: 0.25rem 0;
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="noise-overlay"></div>
+
+```
+<header>
+    <h1>Purdue Basketball</h1>
+    <div class="subtitle">Shot Chart Analytics</div>
+</header>
+
+<div class="controls">
+    <div class="control-group">
+        <label for="season">Season</label>
+        <select id="season">
+            <option value="2024-25">2024-25</option>
+            <option value="2023-24">2023-24</option>
+            <option value="2022-23">2022-23</option>
+        </select>
+    </div>
+    
+    <div class="control-group">
+        <label for="player">Player</label>
+        <select id="player">
+            <option value="all">All Players</option>
+            <option value="braden-smith">Braden Smith</option>
+            <option value="trey-kaufman">Trey Kaufman-Renn</option>
+            <option value="fletcher-loyer">Fletcher Loyer</option>
+            <option value="zach-edey">Zach Edey</option>
+        </select>
+    </div>
+    
+    <div class="control-group">
+        <label for="shotType">Shot Type</label>
+        <select id="shotType">
+            <option value="all">All Shots</option>
+            <option value="2pt">2-Pointers</option>
+            <option value="3pt">3-Pointers</option>
+        </select>
+    </div>
+</div>
+
+<div class="stats-bar">
+    <div class="stat-item">
+        <span class="stat-value" id="totalShots">0</span>
+        <span class="stat-label">Total Shots</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-value" id="fgPercentage">0%</span>
+        <span class="stat-label">FG Percentage</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-value" id="madeShots">0</span>
+        <span class="stat-label">Made Shots</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-value" id="missedShots">0</span>
+        <span class="stat-label">Missed Shots</span>
+    </div>
+</div>
+
+<div class="chart-container">
+    <div class="court">
+        <div class="court-line three-point-arc"></div>
+        <div class="court-line key"></div>
+        <div class="court-line free-throw-circle"></div>
+        <div class="basket"></div>
+        <div id="shots-layer"></div>
+    </div>
+</div>
+
+<div class="legend">
+    <div class="legend-item">
+        <div class="legend-dot made"></div>
+        <span>Made Shot</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-dot missed"></div>
+        <span>Missed Shot</span>
+    </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+    // Sample shot data - this is where you'll plug in real data later
+    const sampleData = {
+        '2024-25': {
+            'all': generateRandomShots(80),
+            'braden-smith': generateRandomShots(45, 'pg'),
+            'trey-kaufman': generateRandomShots(50, 'pf'),
+            'fletcher-loyer': generateRandomShots(55, 'sg'),
+            'zach-edey': generateRandomShots(60, 'c')
+        },
+        '2023-24': {
+            'all': generateRandomShots(75),
+            'braden-smith': generateRandomShots(40, 'pg'),
+            'trey-kaufman': generateRandomShots(48, 'pf'),
+            'fletcher-loyer': generateRandomShots(52, 'sg'),
+            'zach-edey': generateRandomShots(65, 'c')
+        },
+        '2022-23': {
+            'all': generateRandomShots(70),
+            'braden-smith': generateRandomShots(35, 'pg'),
+            'trey-kaufman': generateRandomShots(45, 'pf'),
+            'fletcher-loyer': generateRandomShots(48, 'sg'),
+            'zach-edey': generateRandomShots(58, 'c')
+        }
+    };
+    
+    function generateRandomShots(count, position = 'all') {
+        const shots = [];
+        for (let i = 0; i < count; i++) {
+            let x, y, shotType;
+            
+            // Generate position-appropriate shots
+            if (position === 'c') {
+                // Centers shoot mostly in the paint
+                x = 200 + (Math.random() - 0.5) * 150;
+                y = 30 + Math.random() * 120;
+                shotType = '2pt';
+            } else if (position === 'pf') {
+                // Power forwards mix it up
+                if (Math.random() > 0.6) {
+                    x = 50 + Math.random() * 400;
+                    y = 250 + Math.random() * 150;
+                    shotType = '3pt';
+                } else {
+                    x = 150 + (Math.random() - 0.5) * 200;
+                    y = 30 + Math.random() * 180;
+                    shotType = '2pt';
+                }
+            } else if (position === 'sg' || position === 'pg') {
+                // Guards shoot from everywhere
+                if (Math.random() > 0.5) {
+                    x = 50 + Math.random() * 400;
+                    y = 250 + Math.random() * 150;
+                    shotType = '3pt';
+                } else {
+                    x = 100 + Math.random() * 300;
+                    y = 50 + Math.random() * 200;
+                    shotType = '2pt';
+                }
+            } else {
+                // Random distribution for 'all'
+                x = 50 + Math.random() * 400;
+                y = 30 + Math.random() * 370;
+                shotType = y > 230 ? '3pt' : '2pt';
+            }
+            
+            // Adjust accuracy based on shot type and position
+            let accuracy = 0.45;
+            if (shotType === '2pt') accuracy = position === 'c' ? 0.65 : 0.52;
+            if (shotType === '3pt') accuracy = (position === 'sg' || position === 'pg') ? 0.38 : 0.33;
+            
+            shots.push({
+                x: x,
+                y: y,
+                made: Math.random() < accuracy,
+                type: shotType,
+                player: position === 'all' ? 'Team' : position.toUpperCase(),
+                game: 'vs Indiana'
+            });
+        }
+        return shots;
+    }
+    
+    const seasonSelect = document.getElementById('season');
+    const playerSelect = document.getElementById('player');
+    const shotTypeSelect = document.getElementById('shotType');
+    const shotsLayer = document.getElementById('shots-layer');
+    const tooltip = document.getElementById('tooltip');
+    
+    function updateChart() {
+        const season = seasonSelect.value;
+        const player = playerSelect.value;
+        const shotTypeFilter = shotTypeSelect.value;
+        
+        const shots = sampleData[season][player];
+        const filteredShots = shotTypeFilter === 'all' 
+            ? shots 
+            : shots.filter(s => s.type === shotTypeFilter);
+        
+        renderShots(filteredShots);
+        updateStats(filteredShots);
+    }
+    
+    function renderShots(shots) {
+        shotsLayer.innerHTML = '';
+        
+        shots.forEach((shot, index) => {
+            const shotEl = document.createElement('div');
+            shotEl.className = `shot ${shot.made ? 'made' : 'missed'}`;
+            shotEl.style.left = `${shot.x}px`;
+            shotEl.style.top = `${shot.y}px`;
+            shotEl.style.animationDelay = `${index * 0.01}s`;
+            
+            shotEl.addEventListener('mouseenter', (e) => {
+                tooltip.innerHTML = `
+                    <div class="tooltip-row"><strong>${shot.made ? 'MADE' : 'MISSED'}</strong></div>
+                    <div class="tooltip-row">Type: ${shot.type.toUpperCase()}</div>
+                    <div class="tooltip-row">Player: ${shot.player}</div>
+                    <div class="tooltip-row">Game: ${shot.game}</div>
+                `;
+                tooltip.style.display = 'block';
+                tooltip.style.left = `${e.pageX + 15}px`;
+                tooltip.style.top = `${e.pageY + 15}px`;
+            });
+            
+            shotEl.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+            
+            shotsLayer.appendChild(shotEl);
+        });
+    }
+    
+    function updateStats(shots) {
+        const total = shots.length;
+        const made = shots.filter(s => s.made).length;
+        const missed = total - made;
+        const percentage = total > 0 ? ((made / total) * 100).toFixed(1) : 0;
+        
+        document.getElementById('totalShots').textContent = total;
+        document.getElementById('fgPercentage').textContent = `${percentage}%`;
+        document.getElementById('madeShots').textContent = made;
+        document.getElementById('missedShots').textContent = missed;
+    }
+    
+    seasonSelect.addEventListener('change', updateChart);
+    playerSelect.addEventListener('change', updateChart);
+    shotTypeSelect.addEventListener('change', updateChart);
+    
+    // Initial render
+    updateChart();
+    
+    // Move tooltip with mouse
+    document.addEventListener('mousemove', (e) => {
+        if (tooltip.style.display === 'block') {
+            tooltip.style.left = `${e.pageX + 15}px`;
+            tooltip.style.top = `${e.pageY + 15}px`;
+        }
+    });
+</script>
+```
+
+</body>
+</html>

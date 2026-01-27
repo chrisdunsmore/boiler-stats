@@ -221,17 +221,21 @@
         justify-content: center;
         align-items: center;
         animation: fadeIn 1s ease-out 1s backwards;
-        overflow-x: auto;
+    }
+    
+    .court-wrapper {
+        position: relative;
+        width: 500px;
+        height: 470px;
     }
     
     .court {
         position: relative;
-        width: 500px;
-        height: 470px;
+        width: 100%;
+        height: 100%;
         background: var(--court-wood);
         border: 3px solid var(--court-line);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        flex-shrink: 0;
     }
     
     @media (max-width: 768px) {
@@ -239,7 +243,7 @@
             padding: 1rem;
         }
         
-        .court {
+        .court-wrapper {
             width: 340px;
             height: 320px;
             transform: scale(0.68);
@@ -252,8 +256,11 @@
             padding: 0.5rem;
         }
         
-        .court {
+        .court-wrapper {
+            width: 290px;
+            height: 273px;
             transform: scale(0.58);
+            transform-origin: center;
         }
     }
     
@@ -457,12 +464,14 @@
 </div>
 
 <div class="chart-container">
-    <div class="court">
-        <div class="court-line three-point-arc"></div>
-        <div class="court-line key"></div>
-        <div class="court-line free-throw-circle"></div>
-        <div class="basket"></div>
-        <div id="shots-layer"></div>
+    <div class="court-wrapper">
+        <div class="court">
+            <div class="court-line three-point-arc"></div>
+            <div class="court-line key"></div>
+            <div class="court-line free-throw-circle"></div>
+            <div class="basket"></div>
+            <div id="shots-layer"></div>
+        </div>
     </div>
 </div>
 

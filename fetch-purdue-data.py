@@ -11,8 +11,8 @@ import time
 # Configuration
 
 TEAM_NAME = “Purdue Boilermakers”
-TEAM_ID = “2509”  # Purdue’s ESPN team ID
-SEASONS = [“2025”, “2024”, “2023”, “2022”]  # Year the season ends
+TEAM_ID = “2509”
+SEASONS = [“2025”, “2024”, “2023”, “2022”]
 OUTPUT_FILE = “purdue-shot-data.json”
 
 def get_team_schedule(team_id, season):
@@ -52,11 +52,9 @@ try:
     
     shots = []
     
-    # Extract shot data from plays
     if 'plays' in data:
         for play in data['plays']:
             if 'scoringPlay' in play or 'shotPlay' in play:
-                # This is a simplified version - ESPN's API structure varies
                 shot = {
                     'text': play.get('text', ''),
                     'type': play.get('type', {}).get('text', ''),
@@ -64,13 +62,10 @@ try:
                     'period': play.get('period', {}).get('number', 1)
                 }
                 
-                # Try to extract coordinates if available
                 if 'coordinate' in play:
                     shot['x'] = play['coordinate'].get('x', 0)
                     shot['y'] = play['coordinate'].get('y', 0)
                 else:
-                    # Generate pseudo-random coordinates based on shot type
-                    # This is a fallback - real coordinates may not be in ESPN API
                     shot['x'] = 0
                     shot['y'] = 0
                 
@@ -88,11 +83,9 @@ formatted = []
 
 ```
 for shot in shots:
-    # Determine shot type
     shot_type = "3pt" if "three" in shot['text'].lower() else "2pt"
     
-    # Scale coordinates (adjust based on actual coordinate system)
-    x = shot.get('x', 250) * 2  # Default to middle if no coords
+    x = shot.get('x', 250) * 2
     y = shot.get('y', 200) * 2
     
     formatted.append({
@@ -100,7 +93,7 @@ for shot in shots:
         'y': y,
         'made': shot.get('made', False),
         'type': shot_type,
-        'player': 'Team',  # Can be enhanced with player name extraction
+        'player': 'Team',
         'game': game_name
     })
 
@@ -108,7 +101,7 @@ return formatted
 ```
 
 def main():
-print(“BoilerStats Data Fetcher (Python)”)
+print(“BoilerStats Data Fetcher”)
 print(”=” * 50)
 print()
 
@@ -119,18 +112,17 @@ for season in SEASONS:
     season_key = f"{int(season)-1}-{season[-2:]}"
     print(f"Fetching {season_key} season...")
     
-    # Get schedule
     games = get_team_schedule(TEAM_ID, season)
     print(f"  Found {len(games)} games")
     
     all_shots = []
     
-    for game in games[:5]:  # Limit to first 5 games for testing
+    for game in games[:10]:
         print(f"  Processing: {game['name']}")
         shots = get_game_pbp(game['id'])
         formatted_shots = format_shot_data(shots, game['name'])
         all_shots.extend(formatted_shots)
-        time.sleep(1)  # Be nice to the API
+        time.sleep(1)
     
     print(f"  Total shots: {len(all_shots)}\n")
     
@@ -138,13 +130,11 @@ for season in SEASONS:
         'all': all_shots
     }
 
-# Save to JSON
 with open(OUTPUT_FILE, 'w') as f:
     json.dump(all_data, f, indent=2)
 
 print("=" * 50)
 print(f"Data saved to: {OUTPUT_FILE}")
-print("Upload this file to your GitHub repo")
 print("=" * 50)
 ```
 

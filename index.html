@@ -224,15 +224,13 @@
     }
     
     .court-wrapper {
-        position: relative;
-        width: 500px;
-        height: 470px;
+        transform-origin: center center;
     }
     
     .court {
         position: relative;
-        width: 100%;
-        height: 100%;
+        width: 500px;
+        height: 470px;
         background: var(--court-wood);
         border: 3px solid var(--court-line);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -244,10 +242,29 @@
         }
         
         .court-wrapper {
-            width: 340px;
-            height: 320px;
-            transform: scale(0.68);
-            transform-origin: center;
+            transform: scale(0.7);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+        }
+        
+        header {
+            padding: 1.5rem 1.5rem;
+        }
+        
+        .controls {
+            padding: 1.5rem 1.5rem;
+            gap: 1.5rem;
+        }
+        
+        .stats-bar {
+            padding: 1rem 1.5rem;
+            gap: 1rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
         }
     }
     
@@ -257,10 +274,7 @@
         }
         
         .court-wrapper {
-            width: 290px;
-            height: 273px;
-            transform: scale(0.58);
-            transform-origin: center;
+            transform: scale(0.55);
         }
     }
     

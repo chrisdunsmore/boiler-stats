@@ -221,10 +221,12 @@
         justify-content: center;
         align-items: center;
         animation: fadeIn 1s ease-out 1s backwards;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
     .court-wrapper {
-        transform-origin: center center;
+        min-width: 500px;
     }
     
     .court {
@@ -239,10 +241,7 @@
     @media (max-width: 768px) {
         .chart-container {
             padding: 1rem;
-        }
-        
-        .court-wrapper {
-            transform: scale(0.7);
+            justify-content: flex-start;
         }
         
         h1 {
@@ -250,11 +249,11 @@
         }
         
         header {
-            padding: 1.5rem 1.5rem;
+            padding: 1.5rem;
         }
         
         .controls {
-            padding: 1.5rem 1.5rem;
+            padding: 1.5rem;
             gap: 1.5rem;
         }
         
@@ -265,16 +264,6 @@
         
         .stat-value {
             font-size: 2rem;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .chart-container {
-            padding: 0.5rem;
-        }
-        
-        .court-wrapper {
-            transform: scale(0.55);
         }
     }
     
@@ -296,10 +285,11 @@
     .three-point-arc {
         position: absolute;
         width: 400px;
-        height: 400px;
+        height: 237px;
         border: 2px solid var(--court-line);
-        border-radius: 50%;
-        top: -163px;
+        border-radius: 0 0 200px 200px;
+        border-top: none;
+        top: 0;
         left: 50%;
         transform: translateX(-50%);
         background: transparent;

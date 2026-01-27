@@ -77,6 +77,30 @@
         animation: fadeInDown 0.8s ease-out;
     }
     
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2.5rem;
+        }
+        
+        header {
+            padding: 1.5rem 1.5rem;
+        }
+        
+        .controls {
+            padding: 1.5rem 1.5rem;
+            gap: 1.5rem;
+        }
+        
+        .stats-bar {
+            padding: 1rem 1.5rem;
+            gap: 1rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+        }
+    }
+    
     @keyframes fadeInDown {
         from {
             opacity: 0;
@@ -197,6 +221,7 @@
         justify-content: center;
         align-items: center;
         animation: fadeIn 1s ease-out 1s backwards;
+        overflow-x: auto;
     }
     
     .court {
@@ -206,6 +231,30 @@
         background: var(--court-wood);
         border: 3px solid var(--court-line);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        flex-shrink: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .chart-container {
+            padding: 1rem;
+        }
+        
+        .court {
+            width: 340px;
+            height: 320px;
+            transform: scale(0.68);
+            transform-origin: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .chart-container {
+            padding: 0.5rem;
+        }
+        
+        .court {
+            transform: scale(0.58);
+        }
     }
     
     .court-line {

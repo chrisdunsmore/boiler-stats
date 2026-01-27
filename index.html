@@ -431,7 +431,11 @@
 <div class="tooltip" id="tooltip"></div>
 
 <script>
-    // Sample shot data - this is where you'll plug in real data later
+    // Data will be loaded from external JSON file
+    let shotData = null;
+    let usingSampleData = false;
+    
+    // Sample data as fallback
     const sampleData = {
         '2024-25': {
             'all': generateRandomShots(80),
@@ -455,6 +459,35 @@
             'zach-edey': generateRandomShots(58, 'c')
         }
     };
+    
+    // Load real data from JSON file
+    async function loadRealData() {
+        try {
+            const response = await fetch('purdue-shot-data.json');
+            if (!response.ok) {
+                throw new Error('Data file not found');
+            }
+            const data = await response.json();
+            shotData = data;
+            usingSampleData = false;
+            console.log('✓ Loaded real Purdue shot data');
+            
+            // Add indicator that real data is loaded
+            const subtitle = document.querySelector('.subtitle');
+            subtitle.textContent = 'Shot Chart Analytics • Real Data';
+        } catch (error) {
+            console.warn('Could not load real data, using sample data:', error);
+            shotData = sampleData;
+            usingSampleData = true;
+            
+            // Add indicator that sample data is being used
+            const subtitle = document.querySelector('.subtitle');
+            subtitle.textContent = 'Shot Chart Analytics • Sample Data';
+        }
+        
+        // Initial render after data is loaded
+        updateChart();
+    }
     
     function generateRandomShots(count, position = 'all') {
         const shots = [];
@@ -520,11 +553,14 @@
     const tooltip = document.getElementById('tooltip');
     
     function updateChart() {
+        if (!shotData) return; // Wait for data to load
+        
         const season = seasonSelect.value;
         const player = playerSelect.value;
         const shotTypeFilter = shotTypeSelect.value;
         
-        const shots = sampleData[season][player];
+        // Use real data if available, fallback to sample
+        const shots = shotData[season]?.[player] || [];
         const filteredShots = shotTypeFilter === 'all' 
             ? shots 
             : shots.filter(s => s.type === shotTypeFilter);
@@ -579,8 +615,8 @@
     playerSelect.addEventListener('change', updateChart);
     shotTypeSelect.addEventListener('change', updateChart);
     
-    // Initial render
-    updateChart();
+    // Load data and initialize
+    loadRealData();
     
     // Move tooltip with mouse
     document.addEventListener('mousemove', (e) => {
